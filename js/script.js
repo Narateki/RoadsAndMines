@@ -6,12 +6,15 @@ const CELL_MINE='mine';
 const CELL_LINE='line';
 const CELL_TURN='turn';
 const CELL_CROSS='cross';
+const PLAYGROUND_SIZE = 13;
+const QUANTITY_MINES = 5;
 
 function randomType() {
     let min = 1;
     let max = 10;
     let rand = min - 0.5 + Math.random() * (max - min + 1)
     rand = Math.round(rand);
+    //rand = 1;
     if (rand <= 4) return CELL_LINE;
     else if ( rand <= 7) return CELL_TURN;
     else return CELL_CROSS;
@@ -80,19 +83,30 @@ let game = {
         roundDiv.setAttribute("id", "roundDivId");
         roundPanel.appendChild(roundDiv);
         document.getElementById("roundDivId").textContent = "Ходит Игрок" + this.round;
+
+        let scoreDiv = document.createElement('div');
+        scoreDiv.setAttribute("id", "scoreDivId");
+        scorePanel.appendChild(scoreDiv);
+        document.getElementById("scoreDivId").textContent = "Игрок1 " + players.score1 + ":" + players.score2 + " Игрок2";
     },
 
     showNewCard() {
         let newCardInHTML = document.createElement('img');
-        newCardInHTML.setAttribute("src", "img/"+newCard.type+".svg");
+        newCardInHTML.setAttribute("src", "img/"+newCard.type+game.round+".svg");
         newCardInHTML.setAttribute("class", "newCardImg");
         newCardInHTML.setAttribute("id", "newCardImg");
         cardPanel.insertBefore(newCardInHTML, cardPanel.firstChild);
+    },
+
+    finish() {
+        let confStart = confirm("Игра окончена! Победил Игрок" + game.round + ". Начать новую игру?");
+        if (confStart) game.start();
+        else game.newRound();
     }
 };
 
 let playground = {
-    size: 13,
+    size: PLAYGROUND_SIZE,
     create() {
         playgroundMassive = Create2DArray(this.size+2);
 
@@ -104,6 +118,8 @@ let playground = {
                 //console.log(playgroundMassive[i][j]);
             }
         }
+        playgroundMassive[7][1].owner = 1;
+        playgroundMassive[7][13].owner = 2;
         this.renderPlayground();
     },
     renderPlayground() {
@@ -112,17 +128,27 @@ let playground = {
                 let newCell = document.createElement('img');
                 newCell.setAttribute("id", "p" + i + "_" + j);
                 newCell.setAttribute("class", playgroundMassive[i][j].type);
+                if (i===7 && j===1) {
+                    newCell.style.backgroundColor = "#a4a4a4"
+                }
+                if (i===7 && j===13) {
+                    newCell.style.backgroundColor = "#ffc833"
+                }
                 newCell.addEventListener("click", function change(event) {
                     let target = event.target;
                     let targetId = target.id.toString();
                     let i = getIndexI(targetId), j = getIndexJ(targetId);
                     if (playground.canBuild(i, j)) {
-                        target.setAttribute("class", newCard.type);
+                        target.setAttribute("class", newCard.type + game.round);
                         target.style.transform = 'rotate(' + newCard.angle + 'deg)';
+
                         for (let key in newCard) {
                             playgroundMassive[i][j][key] = newCard[key];
                         }
-                        game.newRound();
+                        playgroundMassive[i][j].owner = game.round;
+                        playground.isScore(i,j);
+                        if (players.isWin()) game.finish();
+                        else game.newRound();
                     }
                     else alert("Нельзя!");
                 });
@@ -131,8 +157,8 @@ let playground = {
         }
     },
 
-    isRoadsConnection(side1, side2) {
-        if (side1 === 1 && side1 === side2) return true;
+    isRoadsConnection(side1, owner1, side2, owner2) {
+        if (side1 === 1 && side1 === side2 && owner1 === owner2) return true;
         else return false;
     },
 
@@ -148,12 +174,47 @@ let playground = {
             playground.isCorrect(newCard.right(),  playgroundMassive[i][j+1].left(), playgroundMassive[i][j+1].type) &&
             playground.isCorrect(newCard.down(),  playgroundMassive[i+1][j].up(), playgroundMassive[i+1][j].type) &&
             playground.isCorrect(newCard.left(),  playgroundMassive[i][j-1].right(), playgroundMassive[i][j-1].type) &&
-            (playground.isRoadsConnection(newCard.up(),  playgroundMassive[i-1][j].down()) ||
-             playground.isRoadsConnection(newCard.right(),  playgroundMassive[i][j+1].left()) ||
-             playground.isRoadsConnection(newCard.down(),  playgroundMassive[i+1][j].up()) ||
-             playground.isRoadsConnection(newCard.left(),  playgroundMassive[i][j-1].right())
+            (playground.isRoadsConnection(newCard.up(), newCard.owner,  playgroundMassive[i-1][j].down(), playgroundMassive[i-1][j].owner) ||
+             playground.isRoadsConnection(newCard.right(), newCard.owner,  playgroundMassive[i][j+1].left(), playgroundMassive[i][j+1].owner) ||
+             playground.isRoadsConnection(newCard.down(), newCard.owner, playgroundMassive[i+1][j].up(), playgroundMassive[i+1][j].owner) ||
+             playground.isRoadsConnection(newCard.left(), newCard.owner, playgroundMassive[i][j-1].right(), playgroundMassive[i][j-1].owner)
             )) return true;
         else return false;
+    },
+
+    isMine(i,j) {
+        if (playgroundMassive[i][j].type === CELL_MINE) {
+            console.log(playgroundMassive[i][j].owner);
+            return true;
+        }
+        else return false;
+    },
+
+    grabMine(i, j) {
+
+        playgroundMassive[i][j].owner = game.round;
+        players.upScore();
+        playgroundMassive[i][j].directions = 0b0000;
+        console.log(playgroundMassive[i][j].owner);
+        console.log(playgroundMassive[i][j].directions);
+    },
+
+    isScore(i,j) {
+        console.log(i,j);
+        if (this.isMine(i-1,j) &&  playgroundMassive[i-1][j].owner === 0) {
+            this.grabMine(i-1,j);
+
+        }
+        else if (this.isMine(i,j+1) && playgroundMassive[i][j+1].owner === 0) {
+            this.grabMine(i,j+1);
+        }
+        else if (this.isMine(i+1,j) && playgroundMassive[i+1][j].owner === 0) {
+            this.grabMine(i+1,j);
+        }
+        else if (this.isMine(i,j-1) && playgroundMassive[i][j-1].owner === 0) {
+            this.grabMine(i,j-1);
+        }
+
     }
 };
 
@@ -165,26 +226,31 @@ class Card {
         else {
             this.type = randomType();
         }
-        this.owner = 1;
         this.angle = 0;
         switch (this.type) {
             case CELL_CITY :
                 this.directions = 0b1111;  //up right down left
+                this.owner = 0;
                 break;
             case CELL_MINE :
                 this.directions = 0b1111;
+                this.owner = 0;
                 break;
             case CELL_EMPTY :
                 this.directions = 0b0000;
+                this.owner = 0;
                 break;
             case CELL_LINE :
                 this.directions = 0b1010;
+                this.owner = game.round;
                 break;
             case CELL_TURN :
                 this.directions = 0b1100;
+                this.owner = game.round;
                 break;
             case CELL_CROSS :
                 this.directions = 0b1101;
+                this.owner = game.round;
                 break;
         }
     }
@@ -222,6 +288,23 @@ class Card {
 
 let playgroundMassive;
 let newCard;
+let players = {
+  score1: 0,
+  score2: 0,
+
+  upScore() {
+      if(game.round === 1) this.score1++;
+      else this.score2++;
+  },
+
+  isWin() {
+      if (Math.min(this.score1, this.score2) + QUANTITY_MINES - this.score1 - this.score2 < Math.max(this.score1, this.score2)){
+          return true;
+      }
+      else return false;
+  }
+
+};
 game.start();
 
 

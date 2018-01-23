@@ -19,6 +19,7 @@
     height: 56px;
     border: solid 1px #d89300;
     float: left;
+    background-color: #d89300;
     background-image: url("../img/city.png");
 }
 
@@ -43,7 +44,7 @@
     padding: 10px;
 }
 
-.score {
+.scorePanel {
     background-color: purple;
     padding: 10px;
     text-align: center;
@@ -69,28 +70,52 @@
     height: 150px;
 }
 
-.line {
+.line1 {
     width: 56px;
     height: 56px;
     border: solid 1px #d89300;
     float: left;
-    background-image: url("../img/line.png");
+    background-image: url("../img/line1.png");
 }
 
-.cross {
+.cross1 {
     width: 56px;
     height: 56px;
     border: solid 1px #d89300;
     float: left;
-    background-image: url("../img/cross.png");
+    background-image: url("../img/cross1.png");
 }
 
-.turn {
+.turn1 {
     width: 56px;
     height: 56px;
     border: solid 1px #d89300;
     float: left;
-    background-image: url("../img/turn.png");
+    background-image: url("../img/turn1.png");
+}
+
+.line2 {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/line2.png");
+}
+
+.cross2 {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/cross2.png");
+}
+
+.turn2 {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/turn2.png");
 }
 
 .butRotate {
