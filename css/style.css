@@ -1,0 +1,137 @@
+.playground {
+    background-color: green;
+    width: 754px;
+    height: 754px;
+    float: right;
+    cursor: pointer;
+}
+
+.empty {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/tree.png");
+}
+
+.city {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/city.png");
+}
+
+.mine {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/mine.png");
+}
+
+.road {
+    width: 56px;
+    height: 56px;
+    float: left;
+    background-color: cyan;
+    border: solid 1px #d89300;
+}
+
+.control {
+    background-color: blue;
+    padding: 10px;
+}
+
+.score {
+    background-color: purple;
+    padding: 10px;
+    text-align: center;
+}
+
+.roundPanel {
+    background-color: aliceblue;
+    padding: 10px;
+    text-align: center;
+}
+
+.cardPanel {
+    background-color: chartreuse;
+    width: 250px;
+    height: 300px;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.newCardImg {
+    width: 150px;
+    height: 150px;
+}
+
+.line {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/line.png");
+}
+
+.cross {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/cross.png");
+}
+
+.turn {
+    width: 56px;
+    height: 56px;
+    border: solid 1px #d89300;
+    float: left;
+    background-image: url("../img/turn.png");
+}
+
+.butRotate {
+    width: 60px;
+    height: 60px;
+    background-color: dodgerblue;
+    margin: 5px;
+    padding: 3px;
+    line-height: 60px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+
+.butSkip {
+    height: 50px;
+    background-color: dodgerblue;
+    margin: 10px;
+    padding: 5px;
+    line-height: 50px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    cursor: pointer;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    user-select: none;
+}
+
+nav {
+    background-color: coral;
+    padding: 10px;
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
